@@ -1,0 +1,839 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="pt-BR" id="html-lang">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Thiago Nectar - Conectando idealizadores a produtores e fornecedores para criação, desenvolvimento e lançamento de cosméticos de alta qualidade, com serviços full e medium service.">
+  <meta name="keywords" content="cosméticos, terceirização, formulação, matérias-primas, fornecedores, qualidade, beleza, full service, medium service">
+  <meta name="author" content="Thiago Augusto Hetzel Silva">
+  <title>Thiago Nectar - Soluções em Cosméticos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f5e8c7;
+      color: #4a2c2a;
+    }
+    .section-padding {
+      padding: 2rem 1rem;
+    }
+    @media (min-width: 768px) {
+      .section-padding {
+        padding: 4rem 2rem;
+      }
+    }
+    input, textarea, select {
+      font-size: 16px;
+      background-color: #fff5e1;
+      border: 1px solid #d4a373;
+      color: #4a2c2a;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: #f4a261;
+      outline: none;
+    }
+    #language-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23d4a373'><path d='M7 7l3-3 3 3m0 6l-3 3-3-3'></path></svg>");
+      background-repeat: no-repeat;
+      background-position: right 0.5rem center;
+      background-size: 1.5em;
+      background-color: #e07a5f;
+      color: #fff;
+    }
+    .hero-bg {
+      background-size: cover;
+      background-position: center;
+      min-height: 300px;
+      background-color: rgba(224, 122, 95, 0.8);
+    }
+    .service-img, .segment-img, .other-service-img, .connection-img {
+      height: 120px;
+      object-fit: cover;
+      width: 100%;
+      border-radius: 0.5rem;
+    }
+    @media (min-width: 768px) {
+      .hero-bg {
+        min-height: 400px;
+      }
+      .service-img, .segment-img, .other-service-img, .connection-img {
+        height: 150px;
+      }
+    }
+    .logo-placeholder {
+      font-family: 'Georgia', serif;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #f4a261;
+    }
+    .header-logo {
+      max-height: 40px;
+      width: auto;
+    }
+    @media (min-width: 768px) {
+      .header-logo {
+        max-height: 50px;
+      }
+    }
+    nav {
+      background-color: #d4a373;
+    }
+    nav a:hover {
+      color: #f4a261;
+    }
+    #mobile-menu {
+      background-color: #e07a5f;
+    }
+    .bg-white {
+      background-color: #fffaf0;
+    }
+    .bg-gray-100 {
+      background-color: #f5e8c7;
+    }
+    .bg-blue-900 {
+      background-color: #8a4a3a;
+    }
+    .text-white {
+      color: #fff;
+    }
+    .bg-yellow-500 {
+      background-color: #f4a261;
+    }
+    .bg-yellow-400:hover {
+      background-color: #e07a5f;
+    }
+    .other-services, .connection-section {
+      background-color: #f5e8c7;
+    }
+    .other-services h3, .connection-section h3 {
+      color: #d4a373;
+    }
+    .other-services p, .connection-section p {
+      color: #4a2c2a;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <!-- Navegação -->
+  <nav class="bg-blue-900 text-white fixed top-0 w-full z-10 shadow-md">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div>
+        <h1 class="logo-placeholder text-lg md:text-xl text-yellow-400 hidden" id="solucoes-logo-text" data-i18n="header-logo-text">Soluções em Cosméticos</h1>
+        <img src="/images/logo-solucoes-cosmeticos.png" alt="Logo Soluções em Cosméticos" class="header-logo" id="solucoes-logo-img" data-i18n-alt="header-logo-alt" onerror="this.classList.add('hidden'); document.getElementById('solucoes-logo-text').classList.remove('hidden');">
+      </div>
+      <div class="flex items-center space-x-4">
+        <select id="language-select" class="bg-blue-800 text-white p-1 rounded-md text-sm focus:outline-none">
+          <option value="pt">Português</option>
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+        </select>
+        <button id="menu-toggle" class="md:hidden focus:outline-none">
+          <i class="fas fa-bars text-xl"></i>
+        </button>
+      </div>
+      <ul id="menu" class="hidden md:flex md:space-x-4">
+        <li><a href="#home" class="hover:text-yellow-400" data-i18n="nav-home">Início</a></li>
+        <li><a href="#sobre" class="hover:text-yellow-400" data-i18n="nav-about">Sobre</a></li>
+        <li><a href="#servicos" class="hover:text-yellow-400" data-i18n="nav-services">Serviços</a></li>
+        <li><a href="#outros-servicos" class="hover:text-yellow-400" data-i18n="nav-other-services">Outros Serviços</a></li>
+        <li><a href="#segmentos" class="hover:text-yellow-400" data-i18n="nav-segments">Segmentos</a></li>
+        <li><a href="#contato" class="hover:text-yellow-400" data-i18n="nav-contact">Contato</a></li>
+      </ul>
+    </div>
+    <div id="mobile-menu" class="hidden bg-blue-900">
+      <ul class="flex flex-col items-center py-4 space-y-2">
+        <li><a href="#home" class="hover:text-yellow-400" data-i18n="nav-home">Início</a></li>
+        <li><a href="#sobre" class="hover:text-yellow-400" data-i18n="nav-about">Sobre</a></li>
+        <li><a href="#servicos" class="hover:text-yellow-400" data-i18n="nav-services">Serviços</a></li>
+        <li><a href="#outros-servicos" class="hover:text-yellow-400" data-i18n="nav-other-services">Outros Serviços</a></li>
+        <li><a href="#segmentos" class="hover:text-yellow-400" data-i18n="nav-segments">Segmentos</a></li>
+        <li><a href="#contato" class="hover:text-yellow-400" data-i18n="nav-contact">Contato</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero-bg text-white text-center section-padding pt-20" style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1350&q=80');">
+    <div class="container mx-auto bg-black bg-opacity-60 py-6 rounded-lg">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4" data-i18n="hero-title">Soluções em Cosméticos</h2>
+      <p class="text-base md:text-lg mb-6" data-i18n="hero-text">Conectamos idealizadores a produtores e fornecedores para criar, desenvolver e lançar cosméticos de alta qualidade, com soluções full service e medium service adaptadas às suas necessidades.</p>
+      <a href="#contato" class="bg-yellow-500 text-blue-900 px-4 py-2 rounded-full font-semibold hover:bg-yellow-400" data-i18n="hero-button">Fale Conosco</a>
+    </div>
+    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1350&q=80" alt="" class="hidden" data-i18n-alt="hero-alt">
+  </section>
+
+  <!-- Visão e Missão -->
+  <section id="visao-missao" class="section-padding bg-gray-100">
+    <div class="container mx-auto text-center">
+      <h2 class="text-xl md:text-2xl font-bold mb-6" data-i18n="vision-mission-title">Visão e Missão</h2>
+      <div class="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="vision-title">Visão</h3>
+          <p class="text-sm md:text-base" data-i18n="vision-text">Ser referência global em soluções de terceirização de cosméticos, promovendo inovação, sustentabilidade e parcerias estratégicas que elevem a qualidade e o alcance das marcas no mercado internacional.</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="mission-title">Missão</h3>
+          <p class="text-sm md:text-base" data-i18n="mission-text">Facilitar a criação, desenvolvimento e lançamento de cosméticos conectando idealizadores a produtores e fornecedores confiáveis, oferecendo serviços full service e medium service com excelência e conformidade com as normas da Anvisa.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sobre -->
+  <section id="sobre" class="section-padding bg-white">
+    <div class="container mx-auto text-center">
+      <h2 class="text-xl md:text-2xl font-bold mb-4" data-i18n="about-title">Sobre Thiago Nectar</h2>
+      <img src="https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?auto=format&fit=crop&w=300&q=80" alt="" class="mx-auto mb-4 rounded-lg shadow-md" loading="lazy" data-i18n-alt="about-alt">
+      <p class="text-base md:text-lg max-w-xl mx-auto" data-i18n="about-text">
+        Com uma trajetória na indústria de cosméticos desde jovem, Thiago Nectar é a ponte ideal entre idealizadores, produtores e fornecedores. Especialista em criação, desenvolvimento e lançamento de produtos, utilizo minha experiência e as melhores ferramentas para oferecer cosméticos atualizados e segmentados, atendendo às demandas do mercado com soluções full service e medium service.
+      </p>
+    </div>
+  </section>
+
+  <!-- Serviços -->
+  <section id="servicos" class="section-padding bg-gray-100">
+    <div class="container mx-auto">
+      <h2 class="text-xl md:text-2xl font-bold text-center mb-6" data-i18n="services-title">Nossos Serviços</h2>
+      <div class="space-y-6 md:grid md:grid-cols-3 md:gap-6 md:space-y-0">
+        <!-- Conexão Estratégica -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1576091160550-2173fdabea77?auto=format&fit=crop&w=300&q=80" alt="" class="connection-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="services-connection-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="services-connection-title">Conexão Estratégica</h3>
+          <p class="text-sm md:text-base" data-i18n="services-connection-text">Atuamos como ponte entre idealizadores, produtores e fornecedores, garantindo um processo fluido e eficiente desde a criação até o lançamento do seu produto no mercado.</p>
+        </div>
+        <!-- Formulação Personalizada -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1580870069867-87c646b1f8f2?auto=format&fit=crop&w=300&q=80" alt="" class="service-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="services-formulation-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="services-formulation-title">Formulação Personalizada</h3>
+          <p class="text-sm md:text-base" data-i18n="services-formulation-text">Desenvolvemos fórmulas sob medida com indústrias parceiras, usando matérias-primas de alta qualidade para atender às suas necessidades.</p>
+        </div>
+        <!-- Desenvolvimento Exclusivo -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=300&q=80" alt="" class="service-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="services-exclusive-dev-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="services-exclusive-dev-title">Desenvolvimento Exclusivo On Demand</h3>
+          <p class="text-sm md:text-base" data-i18n="services-exclusive-dev-text">Criamos produtos únicos sob demanda, ajustando fórmulas e processos para atender a demandas específicas de marcas, com exclusividade e inovação.</p>
+        </div>
+        <!-- Conexão com Fornecedores -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1608245443315-1a8d2f2d7426?auto=format&fit=crop&w=300&q=80" alt="" class="service-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="services-suppliers-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="services-suppliers-title">Conexão com Fornecedores</h3>
+          <p class="text-sm md:text-base" data-i18n="services-suppliers-text">Conectamos marcas a fornecedores de matérias-primas certificadas, garantindo segurança e sustentabilidade.</p>
+        </div>
+        <!-- Terceirização de Produção -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1584308666745-6fe9b7ef674d?auto=format&fit=crop&w=300&q=80" alt="" class="service-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="services-outsourcing-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="services-outsourcing-title">Terceirização de Produção</h3>
+          <p class="text-sm md:text-base" data-i18n="services-outsourcing-text">Facilitamos parcerias com indústrias para produção e envase, com eficiência e qualidade garantidas.</p>
+        </div>
+      </div>
+      <!-- Full Service e Medium Service -->
+      <div class="mt-8 connection-section">
+        <h3 class="text-xl font-bold text-center mb-6" data-i18n="services-options-title">Nossas Soluções: Full Service e Medium Service</h3>
+        <div class="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
+          <div class="bg-white p-4 rounded-lg shadow-md">
+            <img src="https://images.unsplash.com/photo-1600585154102-77f1356e3b8c?auto=format&fit=crop&w=300&q=80" alt="" class="connection-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="services-full-alt">
+            <h4 class="text-lg font-semibold mb-2" data-i18n="services-full-title">Full Service</h4>
+            <p class="text-sm md:text-base" data-i18n="services-full-text">Solução completa: da ideia ao lançamento. Cuidamos de todas as etapas, desde a criação e desenvolvimento até a conexão com fornecedores e produtores, garantindo um produto final de alta qualidade pronto para o mercado.</p>
+          </div>
+          <div class="bg-white p-4 rounded-lg shadow-md">
+            <img src="https://images.unsplash.com/photo-1600585154192-7e8e38855a9b?auto=format&fit=crop&w=300&q=80" alt="" class="connection-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="services-medium-alt">
+            <h4 class="text-lg font-semibold mb-2" data-i18n="services-medium-title">Medium Service</h4>
+            <p class="text-sm md:text-base" data-i18n="services-medium-text">Solução intermediária: apoio em etapas específicas, como formulação, conexão com fornecedores ou terceirização de produção, adaptada às suas necessidades e ao estágio do seu projeto.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Outros Serviços -->
+  <section id="outros-servicos" class="section-padding other-services">
+    <div class="container mx-auto">
+      <h2 class="text-xl md:text-2xl font-bold text-center mb-6" data-i18n="other-services-title">Outros Serviços</h2>
+      <div class="space-y-6 md:grid md:grid-cols-3 md:gap-6 md:space-y-0">
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1600585154192-7e8e38855a9b?auto=format&fit=crop&w=300&q=80" alt="" class="other-service-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="other-services-registration-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="other-services-registration-title">Registros de Marcas e Patentes</h3>
+          <p class="text-sm md:text-base" data-i18n="other-services-registration-text">Auxiliamos no registro de marcas e patentes, garantindo proteção legal para suas criações e inovações no mercado de cosméticos.</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=300&q=80" alt="" class="other-service-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="other-services-ecommerce-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="other-services-ecommerce-title">Sites e E-commerce</h3>
+          <p class="text-sm md:text-base" data-i18n="other-services-ecommerce-text">Desenvolvemos sites e plataformas de e-commerce personalizadas para sua marca, otimizadas para vendas online e experiência do cliente.</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1551288049-b1f2a03a1c76?auto=format&fit=crop&w=300&q=80" alt="" class="other-service-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="other-services-traffic-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="other-services-traffic-title">Tráfego Orgânico</h3>
+          <p class="text-sm md:text-base" data-i18n="other-services-traffic-text">Implementamos estratégias de SEO e marketing de conteúdo para aumentar o tráfego orgânico, melhorando a visibilidade da sua marca nos motores de busca.</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1576091160399-1e6eeaaa19af?auto=format&fit=crop&w=300&q=80" alt="" class="other-service-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="other-services-support-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="other-services-support-title">Suporte e Consultoria</h3>
+          <p class="text-sm md:text-base" data-i18n="other-services-support-text">Oferecemos suporte técnico e consultoria estratégica para todas as etapas do desenvolvimento de produtos, desde a ideia até o lançamento.</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1600585154102-77f1356e3b8c?auto=format&fit=crop&w=300&q=80" alt="" class="other-service-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="other-services-curation-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="other-services-curation-title">Curadoria de Produtos</h3>
+          <p class="text-sm md:text-base" data-i18n="other-services-curation-text">Realizamos curadoria de matérias-primas e tendências de mercado, garantindo que seus produtos estejam alinhados com as demandas atuais.</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=300&q=80" alt="" class="other-service-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="other-services-creation-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="other-services-creation-title">Criação e Inovação</h3>
+          <p class="text-sm md:text-base" data-i18n="other-services-creation-text">Apoiamos a criação de conceitos inovadores para cosméticos, ajudando sua marca a se destacar com produtos únicos e diferenciados.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Segmentos de Mercado -->
+  <section id="segmentos" class="section-padding bg-white">
+    <div class="container mx-auto">
+      <h2 class="text-xl md:text-2xl font-bold text-center mb-6" data-i18n="segments-title">Segmentos de Mercado</h2>
+      <div class="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
+        <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1625772282283-9f4d6b2b9b4e?auto=format&fit=crop&w=300&q=80" alt="" class="segment-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="segments-hair-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="segments-hair-title">Capilar</h3>
+          <p class="text-sm md:text-base" data-i18n="segments-hair-text">Soluções para shampoos, condicionadores e tratamentos capilares, com fórmulas para cuidados diários, antiqueda e anticaspa.</p>
+        </div>
+        <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1617896699903-3b26f8b9f5f8?auto=format&fit=crop&w=300&q=80" alt="" class="segment-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="segments-skincare-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="segments-skincare-title">Skincare</h3>
+          <p class="text-sm md:text-base" data-i18n="segments-skincare-text">Cremes, géis e séruns com ativos naturais, focados em hidratação, anti-idade e proteção solar.</p>
+        </div>
+        <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1596754296936-6e2b7d15b694?auto=format&fit=crop&w=300&q=80" alt="" class="segment-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="segments-makeup-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="segments-makeup-title">Maquiagem</h3>
+          <p class="text-sm md:text-base" data-i18n="segments-makeup-text">Fórmulas inovadoras e embalagens de alta qualidade, testadas dermatologicamente e alinhadas com tendências.</p>
+        </div>
+        <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+          <img src="https://images.unsplash.com/photo-1608245443315-1a8d2f2d7426?auto=format&fit=crop&w=300&q=80" alt="" class="segment-img rounded-t-lg mb-3" loading="lazy" data-i18n-alt="segments-hygiene-alt">
+          <h3 class="text-lg font-semibold mb-2" data-i18n="segments-hygiene-title">Higiene Pessoal</h3>
+          <p class="text-sm md:text-base" data-i18n="segments-hygiene-text">Sabonetes, desodorantes e outros produtos, com foco em segurança e sustentabilidade.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dúvidas Frequentes -->
+  <section id="faq" class="section-padding bg-gray-100">
+    <div class="container mx-auto">
+      <h2 class="text-xl md:text-2xl font-bold text-center mb-6" data-i18n="faq-title">Dúvidas Frequentes</h2>
+      <div class="space-y-4">
+        <details class="bg-white p-4 rounded-lg shadow-md">
+          <summary class="font-semibold cursor-pointer" data-i18n="faq-q1">Como funciona o processo de terceirização?</summary>
+          <p class="mt-2 text-sm md:text-base" data-i18n="faq-a1">Atuamos como ponte, conectando idealizadores a produtores e fornecedores. O processo inclui análise das necessidades, desenvolvimento de fórmulas, produção e lançamento, com supervisão para garantir qualidade.</p>
+        </details>
+        <details class="bg-white p-4 rounded-lg shadow-md">
+          <summary class="font-semibold cursor-pointer" data-i18n="faq-q2">A empresa segue as normas da Anvisa?</summary>
+          <p class="mt-2 text-sm md:text-base" data-i18n="faq-a2">Sim, todas as etapas de formulação e produção são realizadas em conformidade com as regulamentações da Anvisa para garantir segurança e legalidade.</p>
+        </details>
+        <details class="bg-white p-4 rounded-lg shadow-md">
+          <summary class="font-semibold cursor-pointer" data-i18n="faq-q3">Quais são os prazos médios de produção?</summary>
+          <p class="mt-2 text-sm md:text-base" data-i18n="faq-a3">Os prazos variam conforme o projeto, mas geralmente levam de 30 a 90 dias, dependendo da complexidade da formulação e da quantidade.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contato -->
+  <section id="contato" class="section-padding bg-blue-900 text-white">
+    <div class="container mx-auto">
+      <h2 class="text-xl md:text-2xl font-bold text-center mb-6" data-i18n="contact-title">Entre em Contato</h2>
+      <form id="contact-form" action="https://formspree.io/f/your-form-id" method="POST" class="max-w-md mx-auto space-y-4">
+        <div>
+          <label for="nome" class="block text-sm font-medium" data-i18n="contact-name-label">Nome</label>
+          <input type="text" id="nome" name="nome" class="w-full p-2 rounded-md text-gray-800" required>
+        </div>
+        <div>
+          <label for="email" class="block text-sm font-medium" data-i18n="contact-email-label">E-mail</label>
+          <input type="email" id="email" name="email" class="w-full p-2 rounded-md text-gray-800" required>
+        </div>
+        <div>
+          <label for="mensagem" class="block text-sm font-medium" data-i18n="contact-message-label">Mensagem</label>
+          <textarea id="mensagem" name="mensagem" class="w-full p-2 rounded-md text-gray-800" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="bg-yellow-500 text-blue-900 px-4 py-2 rounded-full font-semibold hover:bg-yellow-400 w-full" data-i18n="contact-button">Enviar Mensagem</button>
+      </form>
+      <p id="form-status" class="text-center mt-4 hidden"></p>
+      <p class="text-center mt-4" data-i18n="contact-email-text">Ou envie um e-mail para: <a href="mailto:thiagonectar@gmail.com" class="underline">thiagonectar@gmail.com</a></p>
+    </div>
+  </section>
+
+  <!-- Rodapé -->
+  <footer class="bg-blue-900 text-white py-6">
+    <div class="container mx-auto text-center">
+      <h2 class="logo-placeholder text-md md:text-lg text-yellow-400 mb-3" data-i18n="footer-logo-text">Thiago Nectar</h2>
+      <p data-i18n="footer-copyright">© 2025 Thiago Nectar Cosméticos. Todos os direitos reservados.</p>
+      <p>Rua Presidente Castelo Branco, 707, Colombo (Canguiri), Paraná, CEP 83412-580</p>
+      <p><a href="mailto:thiagonectar@gmail.com" class="underline">thiagonectar@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const translations = {
+      pt: {
+        'nav-home': 'Início',
+        'nav-about': 'Sobre',
+        'nav-services': 'Serviços',
+        'nav-other-services': 'Outros Serviços',
+        'nav-segments': 'Segmentos',
+        'nav-contact': 'Contato',
+        'header-logo-text': 'Soluções em Cosméticos',
+        'header-logo-alt': 'Logo Soluções em Cosméticos',
+        'hero-title': 'Soluções em Cosméticos',
+        'hero-text': 'Conectamos idealizadores a produtores e fornecedores para criar, desenvolver e lançar cosméticos de alta qualidade, com soluções full service e medium service adaptadas às suas necessidades.',
+        'hero-button': 'Fale Conosco',
+        'hero-alt': 'Frascos de cosméticos em um laboratório',
+        'vision-mission-title': 'Visão e Missão',
+        'vision-title': 'Visão',
+        'vision-text': 'Ser referência global em soluções de terceirização de cosméticos, promovendo inovação, sustentabilidade e parcerias estratégicas que elevem a qualidade e o alcance das marcas no mercado internacional.',
+        'mission-title': 'Missão',
+        'mission-text': 'Facilitar a criação, desenvolvimento e lançamento de cosméticos conectando idealizadores a produtores e fornecedores confiáveis, oferecendo serviços full service e medium service com excelência e conformidade com as normas da Anvisa.',
+        'about-title': 'Sobre Thiago Nectar',
+        'about-text': 'Com uma trajetória na indústria de cosméticos desde jovem, Thiago Nectar é a ponte ideal entre idealizadores, produtores e fornecedores. Especialista em criação, desenvolvimento e lançamento de produtos, utilizo minha experiência e as melhores ferramentas para oferecer cosméticos atualizados e segmentados, atendendo às demandas do mercado com soluções full service e medium service.',
+        'about-alt': 'Equipe colaborando em um projeto de cosméticos',
+        'services-title': 'Nossos Serviços',
+        'services-connection-title': 'Conexão Estratégica',
+        'services-connection-text': 'Atuamos como ponte entre idealizadores, produtores e fornecedores, garantindo um processo fluido e eficiente desde a criação até o lançamento do seu produto no mercado.',
+        'services-connection-alt': 'Equipe colaborando em um projeto de cosméticos',
+        'services-formulation-title': 'Formulação Personalizada',
+        'services-formulation-text': 'Desenvolvemos fórmulas sob medida com indústrias parceiras, usando matérias-primas de alta qualidade para atender às suas necessidades.',
+        'services-formulation-alt': 'Laboratório de formulação de cosméticos',
+        'services-exclusive-dev-title': 'Desenvolvimento Exclusivo On Demand',
+        'services-exclusive-dev-text': 'Criamos produtos únicos sob demanda, ajustando fórmulas e processos para atender a demandas específicas de marcas, com exclusividade e inovação.',
+        'services-exclusive-dev-alt': 'Laboratório de desenvolvimento de cosméticos exclusivos',
+        'services-suppliers-title': 'Conexão com Fornecedores',
+        'services-suppliers-text': 'Conectamos marcas a fornecedores de matérias-primas certificadas, garantindo segurança e sustentabilidade.',
+        'services-suppliers-alt': 'Matérias-primas para cosméticos',
+        'services-outsourcing-title': 'Terceirização de Produção',
+        'services-outsourcing-text': 'Facilitamos parcerias com indústrias para produção e envase, com eficiência e qualidade garantidas.',
+        'services-outsourcing-alt': 'Linha de produção de cosméticos',
+        'services-options-title': 'Nossas Soluções: Full Service e Medium Service',
+        'services-full-title': 'Full Service',
+        'services-full-text': 'Solução completa: da ideia ao lançamento. Cuidamos de todas as etapas, desde a criação e desenvolvimento até a conexão com fornecedores e produtores, garantindo um produto final de alta qualidade pronto para o mercado.',
+        'services-full-alt': 'Processo completo de desenvolvimento de cosméticos',
+        'services-medium-title': 'Medium Service',
+        'services-medium-text': 'Solução intermediária: apoio em etapas específicas, como formulação, conexão com fornecedores ou terceirização de produção, adaptada às suas necessidades e ao estágio do seu projeto.',
+        'services-medium-alt': 'Equipe trabalhando em etapa específica de projeto',
+        'other-services-title': 'Outros Serviços',
+        'other-services-registration-title': 'Registros de Marcas e Patentes',
+        'other-services-registration-text': 'Auxiliamos no registro de marcas e patentes, garantindo proteção legal para suas criações e inovações no mercado de cosméticos.',
+        'other-services-registration-alt': 'Documentos de registro de marcas',
+        'other-services-ecommerce-title': 'Sites e E-commerce',
+        'other-services-ecommerce-text': 'Desenvolvemos sites e plataformas de e-commerce personalizadas para sua marca, otimizadas para vendas online e experiência do cliente.',
+        'other-services-ecommerce-alt': 'Interface de e-commerce de cosméticos',
+        'other-services-traffic-title': 'Tráfego Orgânico',
+        'other-services-traffic-text': 'Implementamos estratégias de SEO e marketing de conteúdo para aumentar o tráfego orgânico, melhorando a visibilidade da sua marca nos motores de busca.',
+        'other-services-traffic-alt': 'Gráficos de tráfego orgânico',
+        'other-services-support-title': 'Suporte e Consultoria',
+        'other-services-support-text': 'Oferecemos suporte técnico e consultoria estratégica para todas as etapas do desenvolvimento de produtos, desde a ideia até o lançamento.',
+        'other-services-support-alt': 'Equipe oferecendo suporte',
+        'other-services-curation-title': 'Curadoria de Produtos',
+        'other-services-curation-text': 'Realizamos curadoria de matérias-primas e tendências de mercado, garantindo que seus produtos estejam alinhados com as demandas atuais.',
+        'other-services-curation-alt': 'Seleção de matérias-primas',
+        'other-services-creation-title': 'Criação e Inovação',
+        'other-services-creation-text': 'Apoiamos a criação de conceitos inovadores para cosméticos, ajudando sua marca a se destacar com produtos únicos e diferenciados.',
+        'other-services-creation-alt': 'Conceitos inovadores de cosméticos',
+        'segments-title': 'Segmentos de Mercado',
+        'segments-hair-title': 'Capilar',
+        'segments-hair-text': 'Soluções para shampoos, condicionadores e tratamentos capilares, com fórmulas para cuidados diários, antiqueda e anticaspa.',
+        'segments-hair-alt': 'Produtos capilares como shampoos e condicionadores',
+        'segments-skincare-title': 'Skincare',
+        'segments-skincare-text': 'Cremes, géis e séruns com ativos naturais, focados em hidratação, anti-idade e proteção solar.',
+        'segments-skincare-alt': 'Cremes e séruns para cuidados com a pele',
+        'segments-makeup-title': 'Maquiagem',
+        'segments-makeup-text': 'Fórmulas inovadoras e embalagens de alta qualidade, testadas dermatologicamente e alinhadas com tendências.',
+        'segments-makeup-alt': 'Produtos de maquiagem como batons e sombras',
+        'segments-hygiene-title': 'Higiene Pessoal',
+        'segments-hygiene-text': 'Sabonetes, desodorantes e outros produtos, com foco em segurança e sustentabilidade.',
+        'segments-hygiene-alt': 'Sabonetes e produtos de higiene pessoal',
+        'faq-title': 'Dúvidas Frequentes',
+        'faq-q1': 'Como funciona o processo de terceirização?',
+        'faq-a1': 'Atuamos como ponte, conectando idealizadores a produtores e fornecedores. O processo inclui análise das necessidades, desenvolvimento de fórmulas, produção e lançamento, com supervisão para garantir qualidade.',
+        'faq-q2': 'A empresa segue as normas da Anvisa?',
+        'faq-a2': 'Sim, todas as etapas de formulação e produção são realizadas em conformidade com as regulamentações da Anvisa para garantir segurança e legalidade.',
+        'faq-q3': 'Quais são os prazos médios de produção?',
+        'faq-a3': 'Os prazos variam conforme o projeto, mas geralmente levam de 30 a 90 dias, dependendo da complexidade da formulação e da quantidade.',
+        'contact-title': 'Entre em Contato',
+        'contact-name-label': 'Nome',
+        'contact-email-label': 'E-mail',
+        'contact-message-label': 'Mensagem',
+        'contact-button': 'Enviar Mensagem',
+        'contact-email-text': 'Ou envie um e-mail para:',
+        'footer-logo-text': 'Thiago Nectar',
+        'footer-logo-alt': 'Logo Thiago Nectar',
+        'footer-copyright': '© 2025 Thiago Nectar Cosméticos. Todos os direitos reservados.'
+      },
+      en: {
+        'nav-home': 'Home',
+        'nav-about': 'About',
+        'nav-services': 'Services',
+        'nav-other-services': 'Other Services',
+        'nav-segments': 'Segments',
+        'nav-contact': 'Contact',
+        'header-logo-text': 'Cosmetics Solutions',
+        'header-logo-alt': 'Cosmetics Solutions Logo',
+        'hero-title': 'Cosmetics Solutions',
+        'hero-text': 'We connect visionaries with producers and suppliers to create, develop, and launch high-quality cosmetics, offering tailored full service and medium service solutions.',
+        'hero-button': 'Contact Us',
+        'hero-alt': 'Cosmetic bottles in a laboratory',
+        'vision-mission-title': 'Vision and Mission',
+        'vision-title': 'Vision',
+        'vision-text': 'To be a global reference in cosmetics outsourcing solutions, promoting innovation, sustainability, and strategic partnerships that enhance the quality and reach of brands in the international market.',
+        'mission-title': 'Mission',
+        'mission-text': 'Facilitate the creation, development, and launch of cosmetics by connecting visionaries with trusted producers and suppliers, delivering full service and medium service solutions with excellence and Anvisa compliance.',
+        'about-title': 'About Thiago Nectar',
+        'about-text': 'With a background in the cosmetics industry since a young age, Thiago Nectar serves as the ideal bridge between visionaries, producers, and suppliers. Specializing in creation, development, and product launches, I leverage my experience and the best tools to deliver updated, segmented cosmetics, meeting market demands with full service and medium service solutions.',
+        'about-alt': 'Team collaborating on a cosmetics project',
+        'services-title': 'Our Services',
+        'services-connection-title': 'Strategic Connection',
+        'services-connection-text': 'We act as a bridge between visionaries, producers, and suppliers, ensuring a seamless and efficient process from creation to market launch.',
+        'services-connection-alt': 'Team collaborating on a cosmetics project',
+        'services-formulation-title': 'Custom Formulation',
+        'services-formulation-text': 'We develop tailored formulations with partner industries, using high-quality raw materials to meet your needs.',
+        'services-formulation-alt': 'Cosmetics formulation laboratory',
+        'services-exclusive-dev-title': 'Exclusive On-Demand Development',
+        'services-exclusive-dev-text': 'We create unique products on demand, tailoring formulas and processes to meet specific brand requirements, with exclusivity and innovation.',
+        'services-exclusive-dev-alt': 'Laboratory for exclusive cosmetics development',
+        'services-suppliers-title': 'Supplier Connection',
+        'services-suppliers-text': 'We connect brands with certified raw material suppliers, ensuring safety and sustainability.',
+        'services-suppliers-alt': 'Raw materials for cosmetics',
+        'services-outsourcing-title': 'Production Outsourcing',
+        'services-outsourcing-text': 'We facilitate partnerships with industries for production and packaging, ensuring efficiency and quality.',
+        'services-outsourcing-alt': 'Cosmetics production line',
+        'services-options-title': 'Our Solutions: Full Service and Medium Service',
+        'services-full-title': 'Full Service',
+        'services-full-text': 'Complete solution: from concept to launch. We handle all stages, from creation and development to connecting with suppliers and producers, ensuring a high-quality final product ready for the market.',
+        'services-full-alt': 'Complete cosmetics development process',
+        'services-medium-title': 'Medium Service',
+        'services-medium-text': 'Intermediate solution: support for specific stages, such as formulation, supplier connection, or production outsourcing, tailored to your needs and project stage.',
+        'services-medium-alt': 'Team working on a specific project stage',
+        'other-services-title': 'Other Services',
+        'other-services-registration-title': 'Trademark and Patent Registration',
+        'other-services-registration-text': 'We assist with trademark and patent registration, ensuring legal protection for your creations and innovations in the cosmetics market.',
+        'other-services-registration-alt': 'Trademark registration documents',
+        'other-services-ecommerce-title': 'Websites and E-commerce',
+        'other-services-ecommerce-text': 'We develop customized websites and e-commerce platforms for your brand, optimized for online sales and customer experience.',
+        'other-services-ecommerce-alt': 'Cosmetics e-commerce interface',
+        'other-services-traffic-title': 'Organic Traffic',
+        'other-services-traffic-text': 'We implement SEO and content marketing strategies to boost organic traffic, improving your brand’s visibility on search engines.',
+        'other-services-traffic-alt': 'Organic traffic charts',
+        'other-services-support-title': 'Support and Consulting',
+        'other-services-support-text': 'We provide technical support and strategic consulting for all stages of product development, from ideation to launch.',
+        'other-services-support-alt': 'Support team',
+        'other-services-curation-title': 'Product Curation',
+        'other-services-curation-text': 'We curate raw materials and market trends, ensuring your products align with current demands.',
+        'other-services-curation-alt': 'Raw material selection',
+        'other-services-creation-title': 'Creation and Innovation',
+        'other-services-creation-text': 'We support the creation of innovative concepts for cosmetics, helping your brand stand out with unique and differentiated products.',
+        'other-services-creation-alt': 'Innovative cosmetics concepts',
+        'segments-title': 'Market Segments',
+        'segments-hair-title': 'Haircare',
+        'segments-hair-text': 'Solutions for shampoos, conditioners, and hair treatments, with formulas for daily care, anti-hair loss, and anti-dandruff.',
+        'segments-hair-alt': 'Haircare products like shampoos and conditioners',
+        'segments-skincare-title': 'Skincare',
+        'segments-skincare-text': 'Creams, gels, and serums with natural actives, focused on hydration, anti-aging, and sun protection.',
+        'segments-skincare-alt': 'Creams and serums for skincare',
+        'segments-makeup-title': 'Makeup',
+        'segments-makeup-text': 'Innovative formulas and high-quality packaging, dermatologically tested and aligned with trends.',
+        'segments-makeup-alt': 'Makeup products like lipsticks and eyeshadows',
+        'segments-hygiene-title': 'Personal Hygiene',
+        'segments-hygiene-text': 'Soaps, deodorants, and other products, focusing on safety and sustainability.',
+        'segments-hygiene-alt': 'Soaps and personal hygiene products',
+        'faq-title': 'Frequently Asked Questions',
+        'faq-q1': 'How does the outsourcing process work?',
+        'faq-a1': 'We act as a bridge, connecting visionaries with producers and suppliers. The process includes needs analysis, formula development, production, and launch, with supervision to ensure quality.',
+        'faq-q2': 'Does the company comply with Anvisa regulations?',
+        'faq-a2': 'Yes, all formulation and production stages are carried out in compliance with Anvisa regulations to ensure safety and legality.',
+        'faq-q3': 'What are the average production timelines?',
+        'faq-a3': 'Timelines vary depending on the project, but they typically range from 30 to 90 days, depending on the formula complexity and quantity.',
+        'contact-title': 'Get in Touch',
+        'contact-name-label': 'Name',
+        'contact-email-label': 'Email',
+        'contact-message-label': 'Message',
+        'contact-button': 'Send Message',
+        'contact-email-text': 'Or send an email to:',
+        'footer-logo-text': 'Thiago Nectar',
+        'footer-logo-alt': 'Thiago Nectar Logo',
+        'footer-copyright': '© 2025 Thiago Nectar Cosmetics. All rights reserved.'
+      },
+      es: {
+        'nav-home': 'Inicio',
+        'nav-about': 'Sobre Nosotros',
+        'nav-services': 'Servicios',
+        'nav-other-services': 'Otros Servicios',
+        'nav-segments': 'Segmentos',
+        'nav-contact': 'Contacto',
+        'header-logo-text': 'Soluciones en Cosmética',
+        'header-logo-alt': 'Logo Soluciones en Cosmética',
+        'hero-title': 'Soluciones en Cosmética',
+        'hero-text': 'Conectamos a visionarios con productores y proveedores para crear, desarrollar y lanzar cosméticos de alta calidad, con soluciones full service y medium service adaptadas a sus necesidades.',
+        'hero-button': 'Contáctenos',
+        'hero-alt': 'Frascos de cosméticos en un laboratorio',
+        'vision-mission-title': 'Visión y Misión',
+        'vision-title': 'Visión',
+        'vision-text': 'Ser referencia global en soluciones de terceirización de cosméticos, promoviendo innovación, sostenibilidad y asociaciones estratégicas que eleven la calidad y el alcance de las marcas en el mercado internacional.',
+        'mission-title': 'Misión',
+        'mission-text': 'Facilitar la creación, desarrollo y lanzamiento de cosméticos conectando a visionarios con productores y proveedores confiables, ofreciendo servicios full service y medium service con excelencia y conformidad con las normas de Anvisa.',
+        'about-title': 'Sobre Thiago Nectar',
+        'about-text': 'Con una trayectoria en la industria de cosméticos desde joven, Thiago Nectar es el puente ideal entre visionarios, productores y proveedores. Especialista en creación, desarrollo y lanzamiento de productos, utilizo mi experiencia y las mejores herramientas para ofrecer cosméticos actualizados y segmentados, atendiendo las demandas del mercado con soluciones full service y medium service.',
+        'about-alt': 'Equipo colaborando en un proyecto de cosméticos',
+        'services-title': 'Nuestros Servicios',
+        'services-connection-title': 'Conexión Estratégica',
+        'services-connection-text': 'Actuamos como puente entre visionarios, productores y proveedores, garantizando un proceso fluido y eficiente desde la creación hasta el lanzamiento del producto en el mercado.',
+        'services-connection-alt': 'Equipo colaborando en un proyecto de cosméticos',
+        'services-formulation-title': 'Formulación Personalizada',
+        'services-formulation-text': 'Desarrollamos formulaciones a medida con industrias asociadas, utilizando materias primas de alta calidad para satisfacer sus necesidades.',
+        'services-formulation-alt': 'Laboratorio de formulación de cosméticos',
+        'services-exclusive-dev-title': 'Desarrollo Exclusivo Bajo Demanda',
+        'services-exclusive-dev-text': 'Creamos productos únicos bajo demanda, ajustando fórmulas y procesos para cumplir con requisitos específicos de las marcas, con exclusividad e innovación.',
+        'services-exclusive-dev-alt': 'Laboratorio de desarrollo exclusivo de cosméticos',
+        'services-suppliers-title': 'Conexión con Proveedores',
+        'services-suppliers-text': 'Conectamos marcas con proveedores de materias primas certificadas, garantizando seguridad y sostenibilidad.',
+        'services-suppliers-alt': 'Materias primas para cosméticos',
+        'services-outsourcing-title': 'Tercerización de Producción',
+        'services-outsourcing-text': 'Facilitamos asociaciones con industrias para producción y envasado, con eficiencia y calidad garantizadas.',
+        'services-outsourcing-alt': 'Línea de producción de cosméticos',
+        'services-options-title': 'Nuestras Soluciones: Full Service y Medium Service',
+        'services-full-title': 'Full Service',
+        'services-full-text': 'Solución completa: desde la idea hasta el lanzamiento. Nos encargamos de todas las etapas, desde la creación y desarrollo hasta la conexión con proveedores y productores, garantizando un producto final de alta calidad listo para el mercado.',
+        'services-full-alt': 'Proceso completo de desarrollo de cosméticos',
+        'services-medium-title': 'Medium Service',
+        'services-medium-text': 'Solución intermedia: apoyo en etapas específicas, como formulación, conexión con proveedores o terceirización de producción, adaptada a sus necesidades y al estadio de su proyecto.',
+        'services-medium-alt': 'Equipo trabajando en una etapa específica del proyecto',
+        'other-services-title': 'Otros Servicios',
+        'other-services-registration-title': 'Registro de Marcas y Patentes',
+        'other-services-registration-text': 'Ayudamos con el registro de marcas y patentes, garantizando protección legal para sus creaciones e innovaciones en el mercado de cosméticos.',
+        'other-services-registration-alt': 'Documentos de registro de marcas',
+        'other-services-ecommerce-title': 'Sitios Web y E-commerce',
+        'other-services-ecommerce-text': 'Desarrollamos sitios web y plataformas de e-commerce personalizadas para su marca, optimizadas para ventas online y experiencia del cliente.',
+        'other-services-ecommerce-alt': 'Interfaz de e-commerce de cosméticos',
+        'other-services-traffic-title': 'Tráfico Orgánico',
+        'other-services-traffic-text': 'Implementamos estrategias de SEO y marketing de contenido para aumentar el tráfico orgánico, mejorando la visibilidad de su marca en los motores de búsqueda.',
+        'other-services-traffic-alt': 'Gráficos de tráfico orgánico',
+        'other-services-support-title': 'Soporte y Consultoría',
+        'other-services-support-text': 'Ofrecemos soporte técnico y consultoría estratégica para todas las etapas del desarrollo de productos, desde la idea hasta el lanzamiento.',
+        'other-services-support-alt': 'Equipo ofreciendo soporte',
+        'other-services-curation-title': 'Curaduría de Productos',
+        'other-services-curation-text': 'Realizamos curaduría de materias primas y tendencias del mercado, asegurando que sus productos estén alineados con las demandas actuales.',
+        'other-services-curation-alt': 'Selección de materias primas',
+        'other-services-creation-title': 'Creación e Innovación',
+        'other-services-creation-text': 'Apoyamos la creación de conceptos innovadores para cosméticos, ayudando a su marca a destacarse con productos únicos y diferenciados.',
+        'other-services-creation-alt': 'Conceptos innovadores de cosméticos',
+        'segments-title': 'Segmentos de Mercado',
+        'segments-hair-title': 'Cuidado Capilar',
+        'segments-hair-text': 'Soluciones para champús, acondicionadores y tratamientos capilares, con fórmulas para cuidado diario, anticaída y anticaspa.',
+        'segments-hair-alt': 'Productos capilares como champús y acondicionadores',
+        'segments-skincare-title': 'Cuidado de la Piel',
+        'segments-skincare-text': 'Cremas, geles y sueros con activos naturales, enfocados en hidratación, antienvejecimiento y protección solar.',
+        'segments-skincare-alt': 'Cremas y sueros para el cuidado de la piel',
+        'segments-makeup-title': 'Maquillaje',
+        'segments-makeup-text': 'Fórmulas innovadoras y envases de alta calidad, probados dermatológicamente y alineados con tendencias.',
+        'segments-makeup-alt': 'Productos de maquillaje como labiales y sombras',
+        'segments-hygiene-title': 'Higiene Personal',
+        'segments-hygiene-text': 'Jabones, desodorantes y otros productos, con enfoque en seguridad y sostenibilidad.',
+        'segments-hygiene-alt': 'Jabones y productos de higiene personal',
+        'faq-title': 'Preguntas Frecuentes',
+        'faq-q1': '¿Cómo funciona el proceso de tercerización?',
+        'faq-a1': 'Actuamos como puente, conectando a visionarios con productores y proveedores. El proceso incluye análisis de necesidades, desarrollo de fórmulas, producción y lanzamiento, con supervisión para garantizar calidad.',
+        'faq-q2': '¿La empresa cumple con las normas de Anvisa?',
+        'faq-a2': 'Sí, todas las etapas de formulación y producción se realizan en conformidad con las regulaciones de Anvisa para garantizar seguridad y legalidad.',
+        'faq-q3': '¿Cuáles son los plazos promedio de producción?',
+        'faq-a3': 'Los plazos varían según el proyecto, pero generalmente toman de 30 a 90 días, dependiendo de la complejidad de la fórmula y la cantidad.',
+        'contact-title': 'Contáctenos',
+        'contact-name-label': 'Nombre',
+        'contact-email-label': 'Correo Electrónico',
+        'contact-message-label': 'Mensaje',
+        'contact-button': 'Enviar Mensaje',
+        'contact-email-text': 'O envíe un correo electrónico a:',
+        'footer-logo-text': 'Thiago Nectar',
+        'footer-logo-alt': 'Logo Thiago Nectar',
+        'footer-copyright': '© 2025 Thiago Nectar Cosméticos. Todos los derechos reservados.'
+      },
+      fr: {
+        'nav-home': 'Accueil',
+        'nav-about': 'À Propos',
+        'nav-services': 'Services',
+        'nav-other-services': 'Autres Services',
+        'nav-segments': 'Segments',
+        'nav-contact': 'Contact',
+        'header-logo-text': 'Solutions en Cosmétiques',
+        'header-logo-alt': 'Logo Solutions en Cosmétiques',
+        'hero-title': 'Solutions en Cosmétiques',
+        'hero-text': 'Nous connectons les visionnaires aux fabricants et fournisseurs pour créer, développer et lancer des cosmétiques de haute qualité, avec des solutions full service et medium service adaptées à vos besoins.',
+        'hero-button': 'Contactez-nous',
+        'hero-alt': 'Flacons de cosmétiques dans un laboratoire',
+        'vision-mission-title': 'Vision et Mission',
+        'vision-title': 'Vision',
+        'vision-text': 'Devenir une référence mondiale dans les solutions de sous-traitance de cosmétiques, promouvant l’innovation, la durabilité et des partenariats stratégiques qui améliorent la qualité et la portée des marques sur le marché international.',
+        'mission-title': 'Mission',
+        'mission-text': 'Faciliter la création, le développement et le lancement de cosmétiques en connectant les visionnaires à des fabricants et fournisseurs fiables, offrant des services full service et medium service avec excellence et conformité aux normes de l’Anvisa.',
+        'about-title': 'À Propos de Thiago Nectar',
+        'about-text': 'Avec une expérience dans l’industrie cosmétique depuis un jeune âge, Thiago Nectar est le lien idéal entre visionnaires, fabricants et fournisseurs. Spécialiste de la création, du développement et du lancement de produits, j’utilise mon expertise et les meilleurs outils pour proposer des cosmétiques actualisés et segmentés, répondant aux exigences du marché avec des solutions full service et medium service.',
+        'about-alt': 'Équipe collaborant sur un projet cosmétique',
+        'services-title': 'Nos Services',
+        'services-connection-title': 'Connexion Stratégique',
+        'services-connection-text': 'Nous agissons comme un pont entre visionnaires, fabricants et fournisseurs, garantissant un processus fluide et efficace de la création au lancement sur le marché.',
+        'services-connection-alt': 'Équipe collaborant sur un projet cosmétique',
+        'services-formulation-title': 'Formulation Personnalisée',
+        'services-formulation-text': 'Nous développons des formulations sur mesure avec des industries partenaires, utilisant des matières premières de haute qualité pour répondre à vos besoins.',
+        'services-formulation-alt': 'Laboratoire de formulation de cosmétiques',
+        'services-exclusive-dev-title': 'Développement Exclusif sur Demande',
+        'services-exclusive-dev-text': 'Nous créons des produits uniques sur demande, en adaptant les formules et les processus pour répondre aux exigences spécifiques des marques, avec exclusivité et innovation.',
+        'services-exclusive-dev-alt': 'Laboratoire de développement exclusif de cosmétiques',
+        'services-suppliers-title': 'Connexion avec Fournisseurs',
+        'services-suppliers-text': 'Nous connectons les marques à des fournisseurs de matières premières certifiées, garantissant sécurité et durabilité.',
+        'services-suppliers-alt': 'Matières premières pour cosmétiques',
+        'services-outsourcing-title': 'Externalisation de la Production',
+        'services-outsourcing-text': 'Nous facilitons les partenariats avec des industries pour la production et le conditionnement, avec efficacité et qualité garanties.',
+        'services-outsourcing-alt': 'Ligne de production de cosmétiques',
+        'services-options-title': 'Nos Solutions : Full Service et Medium Service',
+        'services-full-title': 'Full Service',
+        'services-full-text': 'Solution complète : du concept au lancement. Nous prenons en charge toutes les étapes, de la création et du développement à la connexion avec les fournisseurs et fabricants, garantissant un produit final de haute qualité prêt pour le marché.',
+        'services-full-alt': 'Processus complet de développement de cosmétiques',
+        'services-medium-title': 'Medium Service',
+        'services-medium-text': 'Solution intermédiaire : soutien pour des étapes spécifiques, comme la formulation, la connexion avec les fournisseurs ou l’externalisation de la production, adaptée à vos besoins et à l’étape de votre projet.',
+        'services-medium-alt': 'Équipe travaillant sur une étape spécifique du projet',
+        'other-services-title': 'Autres Services',
+        'other-services-registration-title': 'Enregistrement de Marques et Brevets',
+        'other-services-registration-text': 'Nous aidons à l’enregistrement de marques et de brevets, garantissant une protection légale pour vos créations et innovations sur le marché des cosmétiques.',
+        'other-services-registration-alt': 'Documents d’enregistrement de marques',
+        'other-services-ecommerce-title': 'Sites Web et E-commerce',
+        'other-services-ecommerce-text': 'Nous développons des sites web et des plateformes e-commerce personnalisées pour votre marque, optimisées pour les ventes en ligne et l’expérience client.',
+        'other-services-ecommerce-alt': 'Interface e-commerce de cosmétiques',
+        'other-services-traffic-title': 'Trafic Organique',
+        'other-services-traffic-text': 'Nous mettons en œuvre des stratégies de SEO et de marketing de contenu pour augmenter le trafic organique, améliorant la visibilité de votre marque sur les moteurs de recherche.',
+        'other-services-traffic-alt': 'Graphiques de trafic organique',
+        'other-services-support-title': 'Support et Conseil',
+        'other-services-support-text': 'Nous offrons un support technique et des conseils stratégiques pour toutes les étapes du développement de produits, de l’idée au lancement.',
+        'other-services-support-alt': 'Équipe offrant un support',
+        'other-services-curation-title': 'Curation de Produits',
+        'other-services-curation-text': 'Nous effectuons une curation de matières premières et de tendances du marché, garantissant que vos produits sont alignés sur les demandes actuelles.',
+        'other-services-curation-alt': 'Sélection de matières premières',
+        'other-services-creation-title': 'Création et Innovation',
+        'other-services-creation-text': 'Nous soutenons la création de concepts innovants pour les cosmétiques, aidant votre marque à se démarquer avec des produits uniques et différenciés.',
+        'other-services-creation-alt': 'Concepts innovants de cosmétiques',
+        'segments-title': 'Segments de Marché',
+        'segments-hair-title': 'Soins Capillaires',
+        'segments-hair-text': 'Solutions pour shampoings, après-shampoings et traitements capillaires, avec des formules pour le soin quotidien, anti-chute et anti-pelliculaire.',
+        'segments-hair-alt': 'Produits capillaires comme shampoings et après-shampoings',
+        'segments-skincare-title': 'Soins de la Peau',
+        'segments-skincare-text': 'Crèmes, gels et sérums avec des actifs naturels, axés sur l’hydratation, l’anti-âge et la protection solaire.',
+        'segments-skincare-alt': 'Crèmes et sérums pour les soins de la peau',
+        'segments-makeup-title': 'Maquillage',
+        'segments-makeup-text': 'Formules innovantes et emballages de haute qualité, testés dermatologiquement et alignés sur les tendances.',
+        'segments-makeup-alt': 'Produits de maquillage comme rouges à lèvres et ombres à paupières',
+        'segments-hygiene-title': 'Hygiène Personnelle',
+        'segments-hygiene-text': 'Savons, déodorants et autres produits, avec un accent sur la sécurité et la durabilité.',
+        'segments-hygiene-alt': 'Savons et produits d’hygiène personnelle',
+        'faq-title': 'Questions Fréquentes',
+        'faq-q1': 'Comment fonctionne le processus de sous-traitance ?',
+        'faq-a1': 'Nous agissons comme un pont, connectant les visionnaires aux fabricants et fournisseurs. Le processus inclut l’analyse des besoins, le développement de formules, la production et le lancement, avec une supervision pour garantir la qualité.',
+        'faq-q2': 'L’entreprise respecte-t-elle les normes de l’Anvisa ?',
+        'faq-a2': 'Oui, toutes les étapes de formulation et de production sont réalisées en conformité avec les réglementations de l’Anvisa pour garantir la sécurité et la légalité.',
+        'faq-q3': 'Quels sont les délais moyens de production ?',
+        'faq-a3': 'Les délais varient selon le projet, mais ils se situent généralement entre 30 et 90 jours, selon la complexité de la formule et la quantité.',
+        'contact-title': 'Contactez-nous',
+        'contact-name-label': 'Nom',
+        'contact-email-label': 'Email',
+        'contact-message-label': 'Message',
+        'contact-button': 'Envoyer le Message',
+        'contact-email-text': 'Ou envoyez un email à :',
+        'footer-logo-text': 'Thiago Nectar',
+        'footer-logo-alt': 'Logo Thiago Nectar',
+        'footer-copyright': '© 2025 Thiago Nectar Cosméticos. Tous droits réservés.'
+      }
+    };
+
+    function updateLanguage(lang) {
+      document.getElementById('html-lang').setAttribute('lang', lang);
+      document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[lang][key]) {
+          element.textContent = translations[lang][key];
+        }
+      });
+      document.querySelectorAll('[data-i18n-alt]').forEach(element => {
+        const key = element.getAttribute('data-i18n-alt');
+        if (translations[lang][key]) {
+          element.setAttribute('alt', translations[lang][key]);
+        }
+      });
+      const metaDescription = document.querySelector('meta[name="description"]');
+      metaDescription.setAttribute('content', translations[lang]['hero-text']);
+      document.title = translations[lang]['hero-title'];
+    }
+
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuToggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    const languageSelect = document.getElementById('language-select');
+    languageSelect.addEventListener('change', (e) => {
+      updateLanguage(e.target.value);
+    });
+
+    const form = document.getElementById('contact-form');
+    const formStatus = document.getElementById('form-status');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const lang = languageSelect.value;
+      formStatus.classList.remove('hidden');
+      formStatus.textContent = translations[lang]['contact-button'] === 'Enviar Mensagem' ? 'Mensagem enviada com sucesso!' :
+                               translations[lang]['contact-button'] === 'Send Message' ? 'Message sent successfully!' :
+                               translations[lang]['contact-button'] === 'Enviar Mensaje' ? '¡Mensaje enviado con éxito!' :
+                               'Message envoyé avec succès!';
+      formStatus.classList.add('text-green-300');
+      form.reset();
+      setTimeout(() => {
+        formStatus.classList.add('hidden');
+      }, 5000);
+    });
+
+    updateLanguage('pt');
+  </script>
+</body>
+</html>
