@@ -1,15 +1,41 @@
 User-agent: *
 Allow: /
+Disallow: 
 
-# Sitemap
 Sitemap: https://gothanectar.github.io/consultoria/sitemap.xml
+
+# Prioridade de indexação
+Host: gothanectar.github.io
+
+# Configurações específicas
+User-agent: Googlebot
+Allow: /
+Allow: /imagens/
+Allow: /blog/
+Allow: /segmentos/
+Allow: /servicos/
+
+# Configurações para outros bots
+User-agent: Bingbot
+Allow: /
+
+User-agent: Yandex
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+# Configurações de cache
+Cache-control: max-age=86400
+
+# Configurações de rastreamento
+Crawl-delay: 10
 
 # Diretórios importantes
 Allow: /imagens/
 Allow: /css/
 Allow: /js/
 
-# Links para Google
 Host: gothanectar.github.io
 Crawl-delay: 10
 
