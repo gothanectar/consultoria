@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Blog de Thiago Nectar - Artigos sobre desenvolvimento de cosméticos, tendências do mercado e dicas para empreendedores do setor de beleza.">
+  <meta name="keywords" content="blog cosméticos, desenvolvimento cosméticos, tendências beleza, empreendedorismo cosméticos, Thiago Nectar">
+  <title>Blog - Thiago Nectar | Tendências e Insights em Cosméticos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    .blog-card {
+      transition: transform 0.3s ease;
+    }
+    .blog-card:hover {
+      transform: translateY(-5px);
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <!-- Navegação -->
+  <nav class="bg-blue-900 text-white fixed top-0 w-full z-10 shadow-md">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="/" class="text-xl font-bold">
+        <img src="imagens/logo-solucoes-cosmeticos.png" alt="Thiago Nectar" class="h-8">
+      </a>
+      <div class="hidden md:flex space-x-4">
+        <a href="/" class="hover:text-blue-300">Início</a>
+        <a href="/servicos" class="hover:text-blue-300">Serviços</a>
+        <a href="/blog" class="text-blue-300">Blog</a>
+        <a href="/contato" class="hover:text-blue-300">Contato</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Conteúdo do Blog -->
+  <section class="section-padding">
+    <div class="container mx-auto">
+      <h1 class="text-3xl font-bold text-center mb-8">Blog</h1>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Artigo 1 -->
+        <article class="blog-card bg-white p-6 rounded-lg shadow-md">
+          <img src="imagens/blog-tendencias.png" alt="Tendências em Cosméticos 2025" class="w-full h-48 object-cover rounded-lg mb-4">
+          <h2 class="text-xl font-bold mb-2">Tendências em Cosméticos para 2025</h2>
+          <p class="text-gray-600 mb-4">Descubra as principais tendências que irão moldar o mercado de cosméticos nos próximos anos.</p>
+          <a href="/blog/tendencias-2025" class="text-blue-600 hover:text-blue-800">Ler mais →</a>
+        </article>
+
+        <!-- Artigo 2 -->
+        <article class="blog-card bg-white p-6 rounded-lg shadow-md">
+          <img src="imagens/blog-formulacao.png" alt="Formulação de Cosméticos" class="w-full h-48 object-cover rounded-lg mb-4">
+          <h2 class="text-xl font-bold mb-2">Guia Completo de Formulação de Cosméticos</h2>
+          <p class="text-gray-600 mb-4">Aprenda os fundamentos da formulação de cosméticos e como criar produtos de alta qualidade.</p>
+          <a href="/blog/formulacao" class="text-blue-600 hover:text-blue-800">Ler mais →</a>
+        </article>
+
+        <!-- Artigo 3 -->
+        <article class="blog-card bg-white p-6 rounded-lg shadow-md">
+          <img src="imagens/blog-terceirizacao.png" alt="Terceirização de Produção" class="w-full h-48 object-cover rounded-lg mb-4">
+          <h2 class="text-xl font-bold mb-2">Terceirização de Produção: Como Escolher o Fornecedor Ideal</h2>
+          <p class="text-gray-600 mb-4">Dicas essenciais para encontrar e selecionar fornecedores confiáveis para sua marca de cosméticos.</p>
+          <a href="/blog/terceirizacao" class="text-blue-600 hover:text-blue-800">Ler mais →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

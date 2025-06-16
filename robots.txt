@@ -1,0 +1,34 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://gothanectar.github.io/consultoria/sitemap.xml
+
+# Diretórios importantes
+Allow: /imagens/
+Allow: /css/
+Allow: /js/
+
+# Links para Google
+Host: gothanectar.github.io
+Crawl-delay: 10
+
+# URLs importantes
+Allow: /servicos
+Allow: /outros-servicos
+Allow: /segmentos
+Allow: /sobre
+Allow: /contato
+
+# Desabilitar crawling de páginas específicas
+Disallow: /admin/
+Disallow: /wp-admin/
+Disallow: /wp-content/
+Disallow: /wp-includes/
+
+# Desabilitar crawling de arquivos específicos
+Disallow: /*.xls$
+Disallow: /*.xlsx$
+Disallow: /*.doc$
+Disallow: /*.docx$
+Disallow: /*.pdf$
